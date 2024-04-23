@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test
+spec:
+  # minReadySeconds: 60
+  replicas: 2
+  selector:
+    matchLabels:
+      label: test
+  template:
+    metadata:
+      labels:
+        label: test
+    spec:
+      terminationGracePeriodSeconds: 8
+      containers:
+      - name: main
+        image: ttl.sh/kube-pod-term-test:1h
+        command: ["/test.py"]
+        lifecycle:
+          # postStart:
+          #   exec:
+          #     command: ['sleep', '45']
+          preStop:
+            # will be available around 2024-June
+            # sleep:
+            #   seconds: 10
+            exec:
+              command: ['/bin/sh', '-c', 'echo preStop start >/proc/1/fd/2 && sleep 120']
